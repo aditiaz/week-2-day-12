@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Your Project xperiment</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/public/style.css" />
+  </head>
+  <body>
+    <nav class="navbar sticky-top navbar-light navbar-expand-lg bg-light">
+      <div class="container-fluid mx-5 my-2.4">
+        <img
+          style="width: 3.5vw"
+          class="navbar-brand"
+          src="/public/assets/logoDB.png"
+          alt="dumbwaysIc"
+        />
+        <!-- button to toggle when hits breakpoint -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navCollapse"
+          aria-controls="navCollapse"
+          aria-expanded="false"
+          aria-label="Toggle Navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- button to toggle when hits breakpoint end -->
+        <!-- toggled items -->
+        <div class="collapse navbar-collapse" id="navCollapse">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 fs-5 fw-bold">
+            <li class="nav-item">
+              <a href="/home" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link active">Add Project</a>
+            </li>
+          </ul>
+          <a href="/contactMe">
+           <button type="button" class="btn btn-dark" >Contact Me</button>
+          </a>
+        </div>
+        <!-- toggled items end -->
+      </div>
+    </nav>
+
+    <!-- container -->
+    <div
+      class=" d-flex justify-content-center align-items-center "
+      style=" background-color: rgb(230, 205, 205);height: 970px;"
+    >
+      <div class="container-form my-1" >
+        <h1 class="mb-2" style="text-align: center">Add Your Project</h1>
+        <form class="fs-3" action="/home" method="POST">
+          <div class="mb-3">
+            <label for="projectName" class="form-label">Project Name</label>
+            <input type="text" name="name" class="form-control form-control-lg" id="projectName" />
+          </div>
+          <div class="d-flex gap-2 mb-3 justify-content-between">
+            <div style="flex: 50%">
+              <label for="startDate" class="form-label">Start Date</label>
+              <input type="date" name="start-date" class="form-control form-control-lg" id="startDate" />
+            </div>
+            <div style="flex: 50%">
+              <label for="endDate" class="form-label">End date</label>
+              <input type="date" name="end-date" class="form-control form-control-lg" id="endDate" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="desc" class="form-label">Description</label>
+            <textarea
+              style="resize: none"
+              class="form-control"
+              id="desc"
+              rows="7"
+              name="description"
+            ></textarea>
+          </div>
+          <h2>Technologies</h2>
+          <div class="d-flex fs-5 gap-5" style="align-items: center">
+          <div>
+            <div class="checkBox">
+              <input name="checkbox" class="checked" id="nodeJs" type="checkbox" value="nodejs" />
+              <label for="nodeJs">NodeJs</label>
+            </div>
+            <div class="checkBox">
+              <input name="checkbox" class="checked" id="golang" type="checkbox" value="golang" />
+              <label for="golang" for="">Golang</label>
+            </div>
+          </div>       
+              <!-- checkBox 2 -->
+        
+          <div>
+            <div class="checkBox">
+              <input name="checkbox" class="checked" id="reactJs" type="checkbox" value="reactjs" />
+              <label for="reactJs">ReactJs</label>
+            </div>
+            <div class="checkBox">
+              <input name="checkbox" class="checked" id="python" type="checkbox" value="python" />
+              <label for="python">Python</label>
+            </div>
+          </div>          
+        </div>
+          <div class="mb-3 mt-3">
+          <label for="inputImage" class="form-label">Upload Image</label>
+          <img src="" alt="">
+          <input type="file" name="image" id="inputImage" class="form-control form-control-lg" />
+      </div>
+         <div class="d-flex justify-content-end btnSub">
+      <button type="submit" class="btn bg-dark text-white  py-1 px-4">Submit</button>
+      </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!--  container end -->
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"
+  ></script>
+</html>

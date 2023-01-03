@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Get In Touch xperimentwasd</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/public/style.css" />
+  </head>
+  <body>
+    <nav class="navbar sticky-top navbar-light navbar-expand-lg bg-light">
+      <div class="container-fluid mx-5 my-2.4">
+        <img
+          style="width: 3.5vw"
+          class="navbar-brand"
+          src="/public/assets/logoDB.png"
+          alt="dumbwaysIc"
+        />
+        <!-- button to toggle when hits breakpoint -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navCollapse"
+          aria-controls="navCollapse"
+          aria-expanded="false"
+          aria-label="Toggle Navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- button to toggle when hits breakpoint end -->
+        <!-- toggled items -->
+        <div class="collapse navbar-collapse" id="navCollapse">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 fs-5 fw-bold">
+            <li class="nav-item">
+              <a href="/home" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="/addProject" class="nav-link ">Add Project</a>
+            </li>
+          </ul>
+          <button type="button" class="btn btn-dark" href="#">Contact Me</button>
+        </div>
+        <!-- toggled items end -->
+      </div>
+    </nav>
+
+    <!-- container -->
+    <div
+      class="container-fluid d-flex justify-content-center align-items-center "
+      style=" background-color: rgb(230, 205, 205);height: 970px;"
+    >
+      <div class="container-form  my-5"style="width: 20vw;" >
+        <h1 class="mb-5" style="text-align: center">Get In Touch</h1>
+        <form class="fs-3 " action="">
+           <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control form-control-lg" id="email" />
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="text" class="form-control form-control-lg" id="phone" />
+          </div>
+          <div>
+            <label for="subject">Subject</label>
+            <select id="subject">
+              <option></option>
+              <option>Frontend</option>
+              <option>Backend</option>
+              <option>Fullstack</option>
+            </select>
+          </div>
+        
+          <div class="mb-3 mt-3">
+            <label for="desc" class="form-label">Your Message</label>
+            <textarea
+              style="resize: none"
+              class="form-control"
+              id="desc"
+              rows="7"
+            ></textarea>
+          </div>
+      
+         <div class="d-flex justify-content-end btnSub">
+      <button type="button" class="btn bg-dark text-white py-1 px-4">Submit</button>
+      </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!--  container end -->
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"
+  ></script>
+</html>
