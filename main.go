@@ -241,7 +241,7 @@ func home(w http.ResponseWriter, r *http.Request) {
        each.Duration = period(each.start_date, each.end_date)
 		result = append(result, each)
 	}
-	fmt.Println(result)
+	// fmt.Println(result)
 
 	// auth
 	var store = sessions.NewCookieStore([]byte("SESSION_ID"))

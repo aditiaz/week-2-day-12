@@ -72,6 +72,11 @@
         <!-- toggled items end -->
       </div>
     </nav>
+    {{if .Data.FlashData}}
+<div class="alert alert-success alert-dismissible fade show" style="margin-top: 7px !important;" role="alert">{{.Data.FlashData}}
+</div>{{end}}
+
+
 
     <!-- container -->
     <div
@@ -179,13 +184,13 @@
       <h1 class="mt-5 fw-bold" style="text-align: center">My Project</h1>
       <!-- cards container -->
      
-      <div class="d-flex justify-content-center gap-2 row">
+      <div class="d-flex justify-content-center gap-2 row" >
 
       {{range $indexx, $data := .dataInputs }}      
-        <div class="card my-5 col-3 " style="width: 25rem;">
-        <div  style="background-color: aqua;">  <a class="nav-link " href="/projectDetail/{{$data.Id}}" target="_blank">
-          <!-- <img  src="/public/assets/female-portrait.jpg" class="card-img "" alt="project-pic"> -->
-          <!-- <a class="nav-link" href="/projectDetail/{{$data.Id}}" target="_blank"></div> -->
+        <div class="card my-5 col-6 " style="width: 25rem;">
+        <div  >  <a class="nav-link " href="/projectDetail/{{$data.Id}}" target="_blank">
+          <img  src="/public/assets/female-portrait.jpg" class="card-img " alt="project-pic">
+          <a class="nav-link" href="/projectDetail/{{$data.Id}}" target="_blank"></div>
                <h4 class=" mx-3 mt-4 fs-4" style="height: 23px;">{{$data.ProjectName}}</h4>
             </a>
           </a>
@@ -201,16 +206,16 @@
               {{end}}
            
             </div>
+            {{if $.Data.IsLogin}}
             <div class="d-flex justify-content-between btnEdt mt-2">
-              <!-- <button type="button" class="btn btn-dark" href="/editProject" method="POST">edit</button>    -->
-                 
-              <button type="button" class="btn btn-dark" ><a class="nav-link" href="/editProject/{{$data.Id}}">edit</a> </button>
+               <button type="button" class="btn btn-dark" ><a class="nav-link" href="/editProject/{{$data.Id}}">edit</a> </button>
               <button type="button" class="btn btn-dark" ><a class="nav-link" href="/delete-Project/{{$data.Id}}">delete</a> </button>
-           </div>  
+            </div>  
+            {{end}}
           </div>
         </div>
+        <!-- cards container end-->
         {{end}}
- <!-- cards container end-->
       </div>
         
       </div>
