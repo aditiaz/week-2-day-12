@@ -105,7 +105,6 @@ func register(w http.ResponseWriter, r *http.Request) {
 	name := r.PostForm.Get("name")
 	email := r.PostForm.Get("email")
 	password := r.PostForm.Get("password")
-
 	passwordHash, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
 
 	_, err = connection.Conn.Exec(context.Background(), "INSERT INTO tb_user( email,username, password) VALUES ($1, $2, $3)",  email,name, passwordHash)
@@ -117,9 +116,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
 	session, _ := store.Get(r, "SESSION_ID")
-
 	session.AddFlash("Successfully register!", "message")
-
 	session.Save(r, w)
 
 	http.Redirect(w, r, "/login", http.StatusMovedPermanently)
@@ -151,8 +148,12 @@ func formLogin(w http.ResponseWriter, r *http.Request) {
 
 	Data.FlashData = strings.Join(flashes, "")
 
+	respData := map[string]interface{}{
+		"Data" : Data,
+	}
+
 	w.WriteHeader(http.StatusOK)
-	tmpl.Execute(w, Data)
+	tmpl.Execute(w, respData)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {

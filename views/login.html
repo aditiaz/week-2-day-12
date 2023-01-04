@@ -52,7 +52,9 @@
         <!-- toggled items end -->
       </div>
     </nav>
-   
+    {{if .Data.FlashData}}
+    <div class="alert alert-success alert-dismissible fade show" style="margin-top: 7px !important;" role="alert">{{.Data.FlashData}}
+    </div>{{end}}
 
     <!-- container -->
     <div
