@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Get In Touch</title>
+    <title></title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -45,27 +45,9 @@
               <a href="/addProject" class="nav-link ">Add Project</a>
             </li>
           </ul>
-             <!-- add auth link -->
-        <div class="d-flex pe-2">
-          <ul class="navbar-nav">
-            {{if .IsLogin}}
-            <li class="nav-item">
-              <a href="" class="nav-link">Hello, {{.UserName}} </a>
-            </li>
-            <li class="nav-item">
-              <a href="/logout" class="nav-link list-active">Logout</a>
-            </li>
-            {{else}}
-            <li class="nav-item">
-              <a href="/register" class="nav-link">Register</a>
-            </li>
-            <li class="nav-item">
-              <a href="/login" class="nav-link">Login</a>
-            </li>
-            {{end}}
-          </ul>
-        </div>
-          <button type="button" class="btn btn-dark" href="#">Contact Me</button>
+          <a href="/contactMe">
+            <button type="button" class="btn btn-dark" >Contact Me</button>
+           </a>
         </div>
         <!-- toggled items end -->
       </div>
@@ -76,39 +58,19 @@
       class="container-fluid d-flex justify-content-center align-items-center "
       style=" background-color: rgb(230, 205, 205);height: 970px;"
     >
-      <div class="container-form  my-5"style="width: 20vw;" >
-        <h1 class="mb-5" style="text-align: center">Get In Touch</h1>
-        <form class="fs-3 " action="">
-           <div class="mb-3">
+      <div class="container-form mt-5" style="width: 30vw;height: 30vh;" >
+        <h1 class="mb-5" style="text-align: center">Login</h1>
+        <form class="fs-3 " action="/login" method="POST">
+          <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control form-control-lg" id="email" />
+            <input name="email" type="email" class="form-control form-control-lg" id="email" />
           </div>
           <div class="mb-3">
-            <label for="phone" class="form-label">Phone Number</label>
-            <input type="text" class="form-control form-control-lg" id="phone" />
-          </div>
-          <div>
-            <label for="subject">Subject</label>
-            <select id="subject">
-              <option></option>
-              <option>Frontend</option>
-              <option>Backend</option>
-              <option>Fullstack</option>
-            </select>
-          </div>
-        
-          <div class="mb-3 mt-3">
-            <label for="desc" class="form-label">Your Message</label>
-            <textarea
-              style="resize: none"
-              class="form-control"
-              id="desc"
-              rows="7"
-            ></textarea>
-          </div>
-      
-         <div class="d-flex justify-content-end btnSub">
-      <button type="button" class="btn bg-dark text-white py-1 px-4">Submit</button>
+            <label for="password" class="form-label">Password</label>
+            <input name="password" type="password" class="form-control form-control-lg" id="password" />
+                 </div>   
+        <div class="d-flex justify-content-end btnSub">
+      <button type="submit" class="btn bg-dark text-white py-1 px-4">Submit</button>
       </div>
           </div>
         </form>

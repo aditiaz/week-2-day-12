@@ -45,6 +45,26 @@
               <a href="/addProject" class="nav-link">Add Project</a>
             </li>
           </ul>
+            <!-- add auth link -->
+        <div class="d-flex pe-2">
+          <ul class="navbar-nav">
+            {{if .Data.IsLogin}}
+            <li class="nav-item">
+              <a href="" class="nav-link">Hello, {{.Data.UserName}} </a>
+            </li>
+            <li class="nav-item">
+              <a href="/logout" class="nav-link list-active">Logout</a>
+            </li>
+            {{else}}
+            <li class="nav-item">
+              <a href="/register" class="nav-link">Register</a>
+            </li>
+            <li class="nav-item">
+              <a href="/login" class="nav-link">Login</a>
+            </li>
+            {{end}}
+          </ul>
+        </div>
           <a href="/contactMe">
             <button type="button" class="btn btn-dark" >Contact Me</button>
            </a>
