@@ -177,10 +177,12 @@
     </div>
     <div class="mx-5  gap-2 " style="height: 970px " >
       <h1 class="mt-5 fw-bold" style="text-align: center">My Project</h1>
-      <div class="d-flex justify-content-center gap-2">
+      <!-- cards container -->
+     
+      <div class="d-flex justify-content-center gap-2 row">
 
       {{range $indexx, $data := .dataInputs }}      
-        <div class="card my-5 " style="width: 25rem;">
+        <div class="card my-5 col-3 " style="width: 25rem;">
           <a class="nav-link " href="/projectDetail/{{$data.Id}}" target="_blank">
             <img  src="/public/assets/female-portrait.jpg" class="card-img-top img-fluid" alt="project-pic">
             <a class="nav-link" href="/projectDetail/{{$data.Id}}" target="_blank">
@@ -208,6 +210,7 @@
           </div>
         </div>
         {{end}}
+ <!-- cards container end-->
       </div>
         
       </div>
