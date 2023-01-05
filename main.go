@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"my-web/connection"
+	"my-web/middleware"
 	"net/http"
 	"strconv"
 	"strings"
@@ -24,7 +25,7 @@ type MetaData struct {
 }
 
 var Data = MetaData{
-	Title: "Personal Web",
+
 }
 
 type dataInput struct{
@@ -34,9 +35,9 @@ type dataInput struct{
 	Technologies []string
 	start_date time.Time
 	end_date time.Time
-	Duration string
-	Image string
-	IsLogin     bool
+	Duration       string
+	Image          string
+	IsLogin         bool
 } 
 
 type User struct {
@@ -60,11 +61,14 @@ func main() {
 	connection.DataBaseConnection()
 
 	route.PathPrefix("/public/").Handler(http.StripPrefix("/public/",http.FileServer(http.Dir("./public"))))
+	route.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads/"))))
 	
 	route.HandleFunc("/home",home).Methods("GET")
-	route.HandleFunc("/home",addMyProject).Methods("POST")
+	route.HandleFunc("/home", middleware.UploadFile(addMyProject)).Methods("POST")
+
 	route.HandleFunc("/editProject/{id}",editProject).Methods("GET")
-	route.HandleFunc("/updateProject/{id}",updateProject).Methods("POST")
+	route.HandleFunc("/updateProject/{id}", middleware.UploadFile(updateProject)).Methods("POST")
+	
 	route.HandleFunc("/projectDetail/{id}",projectDetail).Methods("GET")
 	route.HandleFunc("/contactMe",contactMe).Methods("GET")
 	route.HandleFunc("/addProject",addProject).Methods("GET")
@@ -156,15 +160,14 @@ func formLogin(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, respData)
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
-	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
-	session, _ := store.Get(r, "SESSION_ID")
-
+func login(w http.ResponseWriter, r *http.Request) {	
 	err := r.ParseForm()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
+	session, _ := store.Get(r, "SESSION_ID")
 	email := r.PostForm.Get("email")
 	password := r.PostForm.Get("password")
 
@@ -191,9 +194,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	// not from struct :
 	session.Values["IsLogin"] = true
-	// not from struct :
+	session.Values["Id"] = user.Id	
 	session.Values["Name"] = user.Name
-	session.Options.MaxAge = 10800 // 1 jam = 3600 detik | 3 jam = 10800
+	session.Options.MaxAge = 10800 
 
 	session.AddFlash("successfully login!", "message")
 	session.Save(r, w)
@@ -206,10 +209,10 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("logout.")
 	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
 	session, _ := store.Get(r, "SESSION_ID")
-	session.Options.MaxAge = -1 // gak boleh kurang dari 0
+	session.Options.MaxAge = -1 
 	session.Save(r, w)
 
-	http.Redirect(w, r, "/home", http.StatusSeeOther)
+	http.Redirect(w, r, "/home",http.StatusTemporaryRedirect)
 }
 
 
@@ -224,8 +227,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("message :" + err.Error()))
 		return
 	}
+	
+	// fmt.Println(result)
+	
 	var result []dataInput
-	rows, err := connection.Conn.Query(context.Background(), "SELECT id, name, description, technologies, start_date, end_date FROM tb_projects ")
+	// auth
+	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
+	session, _ := store.Get(r, "SESSION_ID")
+
+	if session.Values["IsLogin"] != true {
+		Data.IsLogin = false
+		rows, err := connection.Conn.Query(context.Background(), "SELECT  id,name, description, technologies, start_date, end_date,image FROM tb_projects ")
+	
 	if err != nil {
 		fmt.Println(err.Error())
 		return 
@@ -234,25 +247,36 @@ func home(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var each = dataInput{}
 
-		var err = rows.Scan(&each.Id, &each.ProjectName,&each.Description,&each.Technologies,&each.start_date, &each.end_date)
+		var err = rows.Scan(&each.Id, &each.ProjectName,&each.Description,&each.Technologies,&each.start_date, &each.end_date, &each.Image)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
 		}
        each.Duration = period(each.start_date, each.end_date)
 		result = append(result, each)
-	}
-	// fmt.Println(result)
-
-	// auth
-	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
-	session, _ := store.Get(r, "SESSION_ID")
-
-	if session.Values["IsLogin"] != true {
-		Data.IsLogin = false
+// ,		result = append(resulImage	
+}
 	} else {
 		Data.IsLogin = session.Values["IsLogin"].(bool)
 		Data.UserName = session.Values["Name"].(string)
+		user := session.Values["Id"]
+		rows, err := connection.Conn.Query(context.Background(),"SELECT tb_projects.id,name,description,technologies,start_date,end_date,image FROM tb_user LEFT JOIN tb_projects ON tb_projects.user_id = tb_user.id	WHERE tb_projects.user_id=$1",user)
+		if err != nil {
+			fmt.Println(err.Error())
+			return 
+		}
+	
+		for rows.Next() {
+			var each = dataInput{}
+	
+			var err = rows.Scan(&each.Id, &each.ProjectName,&each.Description,&each.Technologies,&each.start_date,&each.end_date,&each.Image)
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+		   each.Duration = period(each.start_date, each.end_date)
+			result = append(result, each)
+		}
 	}
 	fm := session.Flashes("message")
 
@@ -278,30 +302,29 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 func projectDetail( w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "text/html;charset=utf-8")
-
-	id,_ := strconv.Atoi(mux.Vars(r)["id"])
 	var tmpl,err = template.ParseFiles("views/detail-page.html")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("message :" + err.Error()))
 		return
 	}
+	Id, _ := strconv.Atoi(mux.Vars(r)["id"])
 	
 	ProjectDetail := dataInput{}
-	err =  connection.Conn.QueryRow(context.Background(),"SELECT id, name, description, technologies, start_date, end_date FROM tb_projects WHERE id=$1",id).Scan(
-		&ProjectDetail.Id, &ProjectDetail.ProjectName,&ProjectDetail.Description,&ProjectDetail.Technologies,&ProjectDetail.start_date, &ProjectDetail.end_date)
+	err =  connection.Conn.QueryRow(context.Background(),"SELECT id, name, description, technologies, start_date, end_date,image FROM tb_projects WHERE id=$1",Id).Scan(
+		&ProjectDetail.Id, &ProjectDetail.ProjectName,&ProjectDetail.Description,&ProjectDetail.Technologies,&ProjectDetail.start_date, &ProjectDetail.end_date, &ProjectDetail.Image)
 	    if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("message : " + err.Error()))
 			return
 		}
+
+
 		ProjectDetail.Duration = period(ProjectDetail.start_date, ProjectDetail.end_date)
 		Start_date :=   ProjectDetail.start_date.Format("02-Jan-2006")
 		End_date :=   ProjectDetail.end_date.Format("02-Jan-2006")
 
 		// auth :
-	
-	
 
 	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
 	session, _ := store.Get(r, "SESSION_ID")
@@ -319,10 +342,9 @@ func projectDetail( w http.ResponseWriter, r *http.Request){
 	    "Data"    : Data,
 	}
 	w.WriteHeader(http.StatusOK)
-	tmpl.Execute(w,resp,)
+	tmpl.Execute(w,resp)
 
 }
-
 func period(start time.Time, end time.Time)string{
 
 	distance := end.Sub(start)
@@ -355,6 +377,7 @@ func period(start time.Time, end time.Time)string{
 
 
 
+
 func addMyProject(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -366,17 +389,27 @@ func addMyProject(w http.ResponseWriter, r *http.Request) {
 	startDate := r.PostForm.Get("start-date")
 	endDate := r.PostForm.Get("end-date")
 	startDateTime, _ := time.Parse("2006-01-02", startDate)
-
-	// End Date
 	endDateTime, _ := time.Parse("2006-01-02", endDate)
-	_,err = connection.Conn.Exec(context.Background(),"INSERT INTO tb_projects(name, description, technologies, start_date, end_date) VALUES ($1,$2,$3,$4,$5)",projectName,description,checkbox,startDateTime,endDateTime)
+	dataContex := r.Context().Value("dataFile")
+    image := dataContex.(string)
+	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
+    session, _ := store.Get(r, "SESSION_ID")
+
+    if session.Values["IsLogin"] != true {
+        Data.IsLogin = false
+    } else {
+        Data.IsLogin = session.Values["IsLogin"].(bool)
+        Data.UserName = session.Values["Name"].(string)
+    }
+
+	user := session.Values["Id"].(int)
+
+	_,err = connection.Conn.Exec(context.Background(),"INSERT INTO tb_projects(name, description, technologies, start_date, end_date,user_id,image) VALUES ($1,$2,$3,$4,$5,$6,$7)",projectName,description,checkbox,startDateTime,endDateTime,user,image)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("message : " + err.Error()))
 		return
 	}
-
-	// fmt.Println(dataInputs)
 	http.Redirect(w,r,"/home",http.StatusMovedPermanently)
 }
 
@@ -392,12 +425,23 @@ func updateProject(w http.ResponseWriter, r *http.Request) {
 	endDate := r.PostForm.Get("end-date")
 	description := r.PostForm.Get("description")
 	checkbox := r.Form["checkbox"]
-	// image := r.PostForm.Get("image")
 	Start_date,_ :=   time.Parse("2006-01-02",startDate)
 	End_date,_ :=   time.Parse("2006-01-02",endDate)
+	dataContex := r.Context().Value("dataFile")
+    image := dataContex.(string)
+
+	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
+    session, _ := store.Get(r, "SESSION_ID")
+    if session.Values["IsLogin"] != true {
+        Data.IsLogin = false
+    } else {
+        Data.IsLogin = session.Values["IsLogin"].(bool)
+        Data.UserName = session.Values["Name"].(string)
+    }
+
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
-	_, err = connection.Conn.Exec(context.Background(), "UPDATE tb_projects SET name = $1, description = $2, technologies = $3, start_date = $4, end_date = $5 WHERE id=$6", projectName, description, checkbox, Start_date, End_date, id)
+	_, err = connection.Conn.Exec(context.Background(), "UPDATE tb_projects SET name = $1, description = $2, technologies = $3, start_date = $4, end_date = $5,image = $6 WHERE id=$7", projectName, description, checkbox, Start_date, End_date,image, id)
     if err != nil {
         w.WriteHeader(http.StatusInternalServerError)
         w.Write([]byte("message : " + err.Error()))
@@ -420,8 +464,8 @@ func editProject( w http.ResponseWriter, r *http.Request){
 	}
 	
 	ProjectDetail := dataInput{}
-	err =  connection.Conn.QueryRow(context.Background(),"SELECT id, name, description, technologies, start_date, end_date FROM tb_projects WHERE id=$1",id).Scan(
-		&ProjectDetail.Id, &ProjectDetail.ProjectName,&ProjectDetail.Description,&ProjectDetail.Technologies,&ProjectDetail.start_date, &ProjectDetail.end_date)
+	err =  connection.Conn.QueryRow(context.Background(),"SELECT id, name, description, technologies, start_date, end_date,image FROM tb_projects WHERE id=$1",id).Scan(
+		&ProjectDetail.Id, &ProjectDetail.ProjectName,&ProjectDetail.Description,&ProjectDetail.Technologies,&ProjectDetail.start_date, &ProjectDetail.end_date,&ProjectDetail.Image)
 	    if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("message : " + err.Error()))

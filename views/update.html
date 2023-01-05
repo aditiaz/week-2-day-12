@@ -80,7 +80,7 @@
     >
       <div class="container-form my-1" >
         <h1 class="mb-2" style="text-align: center">Update Your Project</h1>
-        <form class="fs-3" action="/updateProject/{{.dataInputs.Id}}" method="POST">
+        <form class="fs-3" action="/updateProject/{{.dataInputs.Id}}" method="POST" enctype="multipart/form-data">
           <div class="mb-3">
             <label for="projectName" class="form-label">Project Name</label>
             <input value="{{.dataInputs.ProjectName}}" type="text" name="name" class="form-control form-control-lg" id="projectName" />
@@ -131,12 +131,12 @@
           </div>          
         </div>
           <div class="mb-3 mt-3">
-          <label for="inputImage" class="form-label">Upload Image</label>
-          <img src="" alt="">
-          <input type="file" name="image" id="inputImage" class="form-control form-control-lg" />
+          <label for="upload_img" class="form-label">Upload Image</label>
+
+          <input type="file"  name="upload-img" id="upload_img" class="form-control form-control-lg"  value="{{.dataInputs.Image}}"/>
       </div>
          <div class="d-flex justify-content-end btnSub">
-      <button type="submit" class="btn bg-dark text-white  py-1 px-4">Submit</button>
+      <button type="submit" class="btn bg-dark text-white  py-1 px-4">Update</button>
       </div>
           </div>
         </form>
