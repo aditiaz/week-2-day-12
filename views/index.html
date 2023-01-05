@@ -41,9 +41,11 @@
             <li class="nav-item">
               <a href="#" class="nav-link active">Home</a>
             </li>
+            {{if $.Data.IsLogin}}
             <li class="nav-item">
               <a href="/addProject" class="nav-link">Add Project</a>
             </li>
+            {{end}}
           </ul>
             <!-- add auth link -->
         <div class="d-flex pe-2">
@@ -73,10 +75,9 @@
       </div>
     </nav>
     {{if .Data.FlashData}}
-<div class="alert alert-success alert-dismissible fade show" style="margin-top: 7px !important;" role="alert">{{.Data.FlashData}}
+<div class="alert alert-success alert-dismissible fade show d-flex" style="width: 17rem !important;text-align: center !important;position: fixed !important;top: 95px;left: 45%;z-index: 500 !important;" role="alert">{{.Data.FlashData}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>{{end}}
-
-
 
     <!-- container -->
     <div

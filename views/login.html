@@ -41,10 +41,22 @@
             <li class="nav-item">
               <a href="/home" class="nav-link">Home</a>
             </li>
+            {{if $.Data.IsLogin}}
             <li class="nav-item">
-              <a href="/addProject" class="nav-link ">Add Project</a>
+              <a href="/addProject" class="nav-link">Add Project</a>
             </li>
+            {{end}}
           </ul>
+          <div class="d-flex pe-2">
+            <ul class="navbar-nav">             
+              <li class="nav-item">
+                <a href="/register" class="nav-link">Register</a>
+              </li>
+              <li class="nav-item">
+                <a href="/login" class="nav-link active fw-bold">Login</a>
+              </li>           
+            </ul>
+          </div>
           <a href="/contactMe">
             <button type="button" class="btn btn-dark" >Contact Me</button>
            </a>
@@ -53,15 +65,16 @@
       </div>
     </nav>
     {{if .Data.FlashData}}
-    <div class="alert alert-success alert-dismissible fade show" style="margin-top: 7px !important;" role="alert">{{.Data.FlashData}}
+    <div class="alert alert-success alert-dismissible fade show d-flex" style="width: 17rem !important;text-align: center !important;position: fixed !important;top: 95px;left: 45%;z-index: 500 !important;" role="alert">{{.Data.FlashData}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>{{end}}
 
     <!-- container -->
     <div
-      class="container-fluid d-flex justify-content-center align-items-center "
+      class="container-fluid d-flex justify-content-center  "
       style=" background-color: rgb(230, 205, 205);height: 970px;"
     >
-      <div class="container-form mt-5" style="width: 30vw;height: 30vh;" >
+      <div class="container-form mt-5" style="width: 30vw;height: 30vh;margin-top: 200px !important;" >
         <h1 class="mb-1" style="text-align: center">Login</h1>
         <form class="fs-3 " action="/login" method="POST">
           <div class="mb-3">

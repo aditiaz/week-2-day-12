@@ -41,9 +41,11 @@
             <li class="nav-item">
               <a href="/home" class="nav-link">Home</a>
             </li>
+            {{if $.Data.IsLogin}}
             <li class="nav-item">
               <a href="/addProject" class="nav-link">Add Project</a>
             </li>
+            {{end}}
           </ul>
           <!-- add auth link -->
           <div class="d-flex pe-2">

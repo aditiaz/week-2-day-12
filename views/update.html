@@ -76,7 +76,7 @@
     <!-- container -->
     <div
       class=" d-flex justify-content-center align-items-center "
-      style=" background-color: rgb(230, 205, 205);height: 970px;"
+      style=" background-color: rgb(230, 205, 205);height: 1100px;"
     >
       <div class="container-form my-1" >
         <h1 class="mb-2" style="text-align: center">Update Your Project</h1>
@@ -131,8 +131,11 @@
           </div>          
         </div>
           <div class="mb-3 mt-3">
+            <figure style="width: 250px;height: 250px"> 
+              <img src="/uploads/{{.dataInputs.Image}}" class="figure-img img-fluid rounded" alt="prev" /> 
+              <figcaption class="figure-caption" style="font-size: small;">This is previous image</figcaption> 
+            </figure> 
           <label for="upload_img" class="form-label">Upload Image</label>
-
           <input type="file"  name="upload-img" id="upload_img" class="form-control form-control-lg"  value="{{.dataInputs.Image}}"/>
       </div>
          <div class="d-flex justify-content-end btnSub">
