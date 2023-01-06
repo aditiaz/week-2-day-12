@@ -13,7 +13,7 @@ var Conn *pgx.Conn
 
 func DataBaseConnection() {
 	var err error
-	databaseUrl := "postgres://postgres:AtlantaBig1738@localhost:5432/personal_web_adit"
+	databaseUrl := "postgres://postgres:pas123@localhost:5432/personal_web_adit"
 	Conn, err = pgx.Connect(context.Background(),databaseUrl)
 	if err != nil {
 		
