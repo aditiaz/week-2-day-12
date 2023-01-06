@@ -63,10 +63,9 @@ func main() {
 	route.PathPrefix("/public/").Handler(http.StripPrefix("/public/",http.FileServer(http.Dir("./public"))))
 	route.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads/"))))
 	
-	// routing ,dengan method GET
+
 	route.HandleFunc("/home",home).Methods("GET")
-	// routing dengan param id,routing edit project idnya di
-	// dapat dari database,sama halnya dengan projectDetail
+
 	route.HandleFunc("/editProject/{id}",editProject).Methods("GET")
 	route.HandleFunc("/projectDetail/{id}",projectDetail).Methods("GET")
 	route.HandleFunc("/contactMe",contactMe).Methods("GET")
@@ -78,8 +77,6 @@ func main() {
 	
 	route.HandleFunc("/home", middleware.UploadFile(addMyProject)).Methods("POST")
 	route.HandleFunc("/updateProject/{id}", middleware.UploadFile(updateProject)).Methods("POST")
-	// mengirimkan data form ke db namun sblm di kirimmkan,
-	// passwordnya di enkripsi terlebih dahulu
 	route.HandleFunc("/register", register).Methods("POST")
 	route.HandleFunc("/login", login).Methods("POST")
 
@@ -112,6 +109,8 @@ func formRegister(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, Data)
 }
 
+
+
 func register(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -141,6 +140,10 @@ func register(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/login", http.StatusMovedPermanently)
 }
 
+
+
+
+
 func formLogin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -151,10 +154,8 @@ func formLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// cookies = storing data
 	var store = sessions.NewCookieStore([]byte("SESSION_ID"))
 	session, _ := store.Get(r, "SESSION_ID")
-  // accepting  flash named  "message"
 	fm := session.Flashes("message")
 
 	var flashes []string
@@ -174,6 +175,9 @@ func formLogin(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	tmpl.Execute(w, respData)
 }
+
+
+
 
 func login(w http.ResponseWriter, r *http.Request) {	
 	err := r.ParseForm()
@@ -206,18 +210,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// deklarasi sesion value dan assign valuenya yg akan
-	// ditereima di function formRegister  :
 	session.Values["IsLogin"] = true
 	session.Values["Id"] = user.Id	
-	session.Values["Name"] = user.Name
-	// durasi sesion expired :
+	session.Values["Name"] = user.Name	
 	session.Options.MaxAge = 10800 
 
 	session.AddFlash("successfully login!", "message")
 	session.Save(r, w)
 	http.Redirect(w, r, "/home", http.StatusMovedPermanently)
 }
+
+
 
 
 func logout(w http.ResponseWriter, r *http.Request) {
@@ -229,6 +232,8 @@ func logout(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/home",http.StatusTemporaryRedirect)
 }
+
+
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -266,8 +271,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		Data.IsLogin = session.Values["IsLogin"].(bool)
 		Data.UserName = session.Values["Name"].(string)
 		user := session.Values["Id"]
-		// tb_user.id akan memasukan idnya ke tb_projects.user_id,foreign key untuk menghubungkan antar table
-		// query to join two table
+
 		rows, err := connection.Conn.Query(context.Background(),"SELECT tb_projects.id,name,description,technologies,start_date,end_date,image FROM tb_user LEFT JOIN tb_projects ON tb_projects.user_id = tb_user.id	WHERE tb_projects.user_id=$1",user)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -308,6 +312,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w,respData)
 }
 
+
+
 func projectDetail( w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "text/html;charset=utf-8")
 	var tmpl,err = template.ParseFiles("views/detail-page.html")
@@ -319,7 +325,7 @@ func projectDetail( w http.ResponseWriter, r *http.Request){
 	Id, _ := strconv.Atoi(mux.Vars(r)["id"])
 	
 	ProjectDetail := dataInput{}
-	//  menampilkan data dari database sesuai dengan Idnya :
+	
 	err =  connection.Conn.QueryRow(context.Background(),"SELECT id, name, description, technologies, start_date, end_date,image FROM tb_projects WHERE id=$1",Id).Scan(
 		&ProjectDetail.Id, &ProjectDetail.ProjectName,&ProjectDetail.Description,&ProjectDetail.Technologies,&ProjectDetail.start_date, &ProjectDetail.end_date, &ProjectDetail.Image)
 	    if err != nil {
@@ -350,6 +356,9 @@ func projectDetail( w http.ResponseWriter, r *http.Request){
 	tmpl.Execute(w,resp)
 
 }
+
+
+
 func period(start time.Time, end time.Time)string{
 
 	distance := end.Sub(start)
@@ -377,12 +386,15 @@ func period(start time.Time, end time.Time)string{
 	return duration
 }
 
+
+
+
 func addMyProject(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Fatal(err)
 	}  
-	// mengambil data dari form inputan :
+	
     projectName :=  r.PostForm.Get("name")
 	description := r.PostForm.Get("description")
 	checkbox := r.Form["checkbox"]
@@ -413,6 +425,8 @@ func addMyProject(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w,r,"/home",http.StatusMovedPermanently)
 }
 
+
+
 func updateProject(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -438,7 +452,6 @@ func updateProject(w http.ResponseWriter, r *http.Request) {
     }
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
-	// update projek sesuai dengan idnya
 	_, err = connection.Conn.Exec(context.Background(), "UPDATE tb_projects SET name = $1, description = $2, technologies = $3, start_date = $4, end_date = $5,image = $6 WHERE id=$7", projectName, description, checkbox, Start_date, End_date,image, id)
     if err != nil {
         w.WriteHeader(http.StatusInternalServerError)
@@ -449,6 +462,9 @@ func updateProject(w http.ResponseWriter, r *http.Request) {
 		
 	http.Redirect(w,r,"/home",http.StatusMovedPermanently)
 }
+
+
+
 
 func editProject( w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "text/html;charset=utf-8")
@@ -492,6 +508,9 @@ func editProject( w http.ResponseWriter, r *http.Request){
 	tmpl.Execute(w,resp)
 }
 
+
+
+
 func deleteProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
@@ -504,6 +523,8 @@ func deleteProject(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/home", http.StatusFound)
 }
+
+
 
 func contactMe(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -528,6 +549,9 @@ func contactMe(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	tmpl.Execute(w,Data)
 }
+
+
+
 func addProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
